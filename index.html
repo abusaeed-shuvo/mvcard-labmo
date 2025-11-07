@@ -241,7 +241,7 @@
 			<model-viewer
 				id="model-viewer"
 				src="./models/lambo.glb"
-				alt="3D Business Card"
+				alt="3D Model of a Lamborghini"
 				camera-controls
 				auto-rotate
 				shadow-intensity="1"
@@ -250,6 +250,14 @@
 				ar-modes="webxr scene-viewer quick-look"
 				environment-image="neutral"
 			></model-viewer>
+		</div>
+
+		<div
+			id="modelButtons"
+			style="margin-top: 0.5rem; display: flex; gap: 10rem"
+		>
+			<button id="prevModel"><</button>
+			<button id="nextModel">></button>
 		</div>
 
 		<div id="socialContainer">
@@ -264,6 +272,28 @@
 		</div>
 
 		<script>
+			const models = [
+				"./models/lambo.glb",
+				"./models/lambo1.glb",
+				"./models/lambo2.glb",
+			];
+
+			let currentIndex = 0;
+			const viewer = document.getElementById("model-viewer");
+
+			function showModel(index) {
+				viewer.src = models[index];
+			}
+
+			document.getElementById("prevModel").addEventListener("click", () => {
+				currentIndex = (currentIndex - 1 + models.length) % models.length;
+				showModel(currentIndex);
+			});
+
+			document.getElementById("nextModel").addEventListener("click", () => {
+				currentIndex = (currentIndex + 1) % models.length;
+				showModel(currentIndex);
+			});
 			// Social actions
 			const actions = {
 				facebookIcon: () =>
