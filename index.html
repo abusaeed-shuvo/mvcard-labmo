@@ -1,0 +1,293 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>AR Business Card</title>
+		<script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+			rel="stylesheet"
+		/>
+		<script
+			type="module"
+			src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+		></script>
+		<style>
+			body {
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-start; /* changed from space-between */
+				height: 100vh; /* full viewport */
+				margin: 0;
+				padding: 0;
+				align-items: center;
+				font-family: "Montserrat", sans-serif;
+				background: #fafafa;
+				overflow-y: scroll;
+				gap: 1rem;
+			}
+
+			#modelHolder {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: center;
+				width: 100%;
+				max-width: 500px;
+				height: 60vh;
+				gap: 0.5rem;
+				flex-wrap: wrap;
+			}
+
+			#model-viewer {
+				flex: 1;
+				min-width: 300px;
+				max-width: 500px;
+				height: 100%;
+				border-radius: 1rem;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+				background: rgba(0, 0, 0, 0.2);
+				z-index: 10;
+			}
+
+			#logoBox {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: center;
+				padding: 0.75rem 1rem;
+				border-radius: 0.75rem;
+				background-color: rgba(0, 0, 0, 0.2);
+				backdrop-filter: blur(6px);
+				gap: 1rem;
+				max-width: 500px;
+				text-align: center;
+				color: white;
+				z-index: 20;
+				flex-shrink: 0;
+			}
+			#logoBox img {
+				width: 100px;
+				height: 100px;
+				object-fit: cover;
+				border-radius: 0.2rem;
+				border: 2px solid white;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+			}
+
+			#logoBox h2 {
+				margin: 0.25rem 0 0.1rem;
+				font-size: 1.2em;
+			}
+
+			#logoBox p {
+				margin: 0;
+				font-size: 0.95em;
+				opacity: 0.85;
+			}
+			#logoBoxText {
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			#contactContainer {
+				display: flex;
+				flex-direction: row;
+				align-items: flex-start;
+				justify-content: center;
+				gap: 0.75rem;
+				padding: 1rem;
+				border-radius: 0.75rem;
+				background-color: rgba(0, 0, 0, 0.2);
+				backdrop-filter: blur(6px);
+				color: white;
+				z-index: 20;
+			}
+
+			/* Each contact item */
+			.contact-container {
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-start;
+				align-items: center;
+				gap: 0.5rem;
+				cursor: pointer;
+				width: 100%;
+				transition: transform 0.2s ease, opacity 0.2s ease,
+					background-color 0.2s ease, padding 0.2s ease, box-shadow 0.2s ease;
+				padding: 0.1rem;
+				border-radius: 0.5rem;
+				background-color: rgba(0, 0, 0, 0);
+			}
+			.contact-container:hover {
+				transform: scale(1.05);
+				opacity: 0.95;
+				background-color: rgba(0, 0, 0, 0.4);
+				backdrop-filter: blur(6px);
+				box-shadow: 0 -0.25rem 0.625rem rgba(0, 0, 0, 0.3);
+			}
+
+			.contact-container h2 {
+				margin: 0;
+				font-size: 1em;
+				color: white;
+				word-break: break-word; /* keep text inside container */
+			}
+
+			/* Contact icon */
+			.contact-icon {
+				width: 3rem;
+				height: 3rem;
+				flex-shrink: 0;
+			}
+
+			#socialContainer {
+				display: flex;
+				justify-content: space-evenly;
+				align-items: center;
+
+				gap: 0.75rem;
+				width: 90%;
+				max-width: 500px;
+				padding: 0.5rem;
+				border-radius: 0.5rem;
+				background-color: rgba(0, 0, 0, 0.2);
+				backdrop-filter: blur(6px);
+				margin: 0 10px;
+				margin-bottom: -1%;
+				z-index: 10;
+			}
+
+			.social-icon {
+				width: 2.5rem;
+				height: 2.5rem;
+				cursor: pointer;
+				transition: transform 0.2s ease, opacity 0.2s ease;
+			}
+
+			.social-icon:hover {
+				transform: scale(1.1);
+				opacity: 0.9;
+			}
+
+			@media (max-width: 500px) {
+				.social-icon {
+					width: 60px;
+					height: 60px;
+				}
+			}
+			#addToContact {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				margin-top: auto;
+				margin-bottom: calc(5vh + 1rem);
+				cursor: pointer;
+				z-index: 9;
+			}
+
+			#addToContact img {
+				width: 160px; /* adjust as needed */
+				height: 60px;
+
+				opacity: 0.9;
+				transition: transform 0.2s ease, opacity 0.2s ease;
+			}
+
+			#addToContact:hover img {
+				transform: scale(1.05);
+				opacity: 1;
+			}
+			#muteBtn {
+				position: fixed;
+				top: 1rem;
+				right: 1rem;
+				width: 40px;
+				height: 40px;
+				z-index: 30;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="logoBox">
+			<img src="./img/profile.png" alt="Profile" loading="lazy" />
+			<div id="logoBoxText">
+				<h2>John Smith</h2>
+				<p>Android & AR Developer</p>
+			</div>
+		</div>
+		<div id="contactContainer">
+			<div id="phoneIcon" class="social-icon">
+				<img class="contact-icon" src="./icons/call.png" />
+			</div>
+
+			<div id="mailIcon" class="social-icon">
+				<img class="contact-icon" src="./icons/mail.png" />
+			</div>
+
+			<div id="locationIcon" class="social-icon">
+				<img class="contact-icon" src="./icons/location.png" />
+			</div>
+			<div id="facebookIcon" class="social-icon">
+				<img class="contact-icon" src="./icons/facebook.png" />
+			</div>
+		</div>
+
+		<div id="modelHolder">
+			<model-viewer
+				id="model-viewer"
+				src="./models/lambo.glb"
+				alt="3D Business Card"
+				camera-controls
+				auto-rotate
+				shadow-intensity="1"
+				exposure="1"
+				ar
+				ar-modes="webxr scene-viewer quick-look"
+				environment-image="neutral"
+			></model-viewer>
+		</div>
+
+		<div id="socialContainer">
+			<img id="snapchatIcon" class="social-icon" src="./icons/snapchat.png" />
+			<img id="linkedinIcon" class="social-icon" src="./icons/linkedin.png" />
+
+			<img id="whatsappIcon" class="social-icon" src="./icons/whatsapp.png" />
+			<img id="websiteIcon" class="social-icon" src="./icons/web.png" />
+		</div>
+		<div id="addToContact">
+			<img src="./icons/add-to-contact.png" alt="Add to contact" />
+		</div>
+
+		<script>
+			// Social actions
+			const actions = {
+				facebookIcon: () =>
+					window.open("https://www.facebook.com/yourusername", "_blank"),
+				linkedinIcon: () =>
+					window.open("https://www.linkedin.com/in/yourusername", "_blank"),
+				whatsappIcon: () =>
+					window.open("https://wa.me/8801234567890", "_blank"),
+				locationIcon: () =>
+					window.open(
+						"https://www.google.com/maps?q=123+Main+Street,+City",
+						"_blank"
+					),
+				phoneIcon: () => (window.location.href = "tel:+8801234567890"),
+				mailIcon: () => (window.location.href = "mailto:youremail@example.com"),
+				websiteIcon: () => window.open("https://www.yourwebsite.com", "_blank"),
+				addToContact: () => window.open("./my-contact.vcf", "_blank"),
+			};
+
+			Object.keys(actions).forEach((id) => {
+				const el = document.getElementById(id);
+				el.addEventListener("click", actions[id]);
+				el.addEventListener("touchstart", actions[id]);
+			});
+		</script>
+	</body>
+</html>
